@@ -320,7 +320,24 @@ public class FeedbackResponseCommentsLogicTest extends BaseLogicTest {
                 "not_exist", "not_exist", null);
         assertEquals(0, comments.size());
     }
+  @Test
+    public void testIsNameVisibleToUser_WithDifferentUserEmailAndNoVisibility_ReturnsFalse() {
+        String comment1 = "This Is A Comment";
+        String response1ForQ1S1C1 = "response1ForQ1S1C1";
+        FeedbackResponseCommentAttributes comment = dataBundle.feedbackResponseComments.get(comment1);
+        FeedbackResponseAttributes relatedResponse = dataBundle.feedbackResponses.get(response1ForQ1S1C1);
+        CourseRoster roster = new CourseRoster(new ArrayList<>(courseRosterDataBundle.students.values()),
+                new ArrayList<>(courseRosterDataBundle.instructors.values()));
+        // Configuração do teste
+        comment.setShowGiverNameTo(Arrays.asList(FeedbackParticipantType.STUDENTS));
+        comment.setCommentGiver("anotheruser@example.com");
 
+        // Execução do teste
+        boolean result = frcLogic.isNameVisibleToUser(comment, relatedResponse, "user@example.com", roster);
+
+        // Verificação do resultado
+        assertFalse(result);
+    }
     @Test
     public void testGetFeedbackResponseCommentForSessionInSection_withSectionName_shouldReturnCommentsInSection() {
         List<FeedbackResponseCommentAttributes> comments =
